@@ -34,3 +34,14 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Vitest
+__screenshots__/
+
+# Vite
+*.timestamp-*-*.mjs
+
+# Nuxt
+.output
+.nuxt/*
+.env
