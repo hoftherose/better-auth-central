@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
+import { authClient } from "./lib/auth-client";
 
 const { data: session } = await authClient.useSession(useFetch).catch(
   () => undefined,
