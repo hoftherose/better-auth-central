@@ -1,6 +1,6 @@
 <template>
-  <div>
+  <div class="flex h-screen w-full items-center justify-center">
     <NuxtRouteAnnouncer />
-    <NuxtWelcome />
+    <Button>Login</Button>
   </div>
 </template>
