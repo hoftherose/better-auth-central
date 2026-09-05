@@ -1,5 +1,5 @@
 import { betterAuth } from "better-auth";
-import { admin } from "better-auth/plugins";
+import { admin, openAPI } from "better-auth/plugins";
 import Database from "better-sqlite3";
 
 export const auth = betterAuth({
@@ -8,7 +8,8 @@ export const auth = betterAuth({
         enabled: true,
     },
     plugins: [
-        admin()
+        admin(),
+        openAPI()
     ],
     session: {
         deferSessionRefresh: true,

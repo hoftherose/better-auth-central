@@ -53,6 +53,7 @@
             </NuxtLink>
 
             <div class="ml-auto flex items-center gap-2">
+                <NuxtLink to="/api/auth/reference" external>Docs</NuxtLink>
                 <span
                     v-if="user"
                     class="hidden max-w-40 truncate text-sm text-muted-foreground sm:inline"
