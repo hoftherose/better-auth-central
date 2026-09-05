@@ -2,7 +2,7 @@
     import { computed, onMounted, ref } from "vue";
     import { authClient } from "@/lib/auth-client";
 
-    const { data: session, refresh } = authClient.useSession(useFetch);
+    const { data: session } = await authClient.useSession(useFetch);
     const user = computed(() => session.value?.user);
 
     const name = ref("");
@@ -38,7 +38,7 @@
 
         loading.value = true;
         try {
-            const res = await authClient.signUp.email(
+            await authClient.signUp.email(
                 {
                     name: name.value,
                     email: email.value,
@@ -58,10 +58,7 @@
                     },
                 },
             );
-            if ((await res).data?.token) {
-                await refresh().catch(() => undefined);
-            }
-            navigateTo("/", { replace: true });
+            navigateTo("/login", { replace: true });
         } catch (err: any) {
             error.value = extractErrorMessage(err) ?? "Registration failed";
             success.value = null;
@@ -168,7 +165,7 @@
         <CardFooter class="justify-center">
             <span class="text-sm text-muted-foreground">
                 Already have an account?
-                <NuxtLink to="/" class="font-medium text-foreground hover:underline">
+                <NuxtLink to="/login" class="font-medium text-foreground hover:underline">
                     Sign in
                 </NuxtLink>
             </span>

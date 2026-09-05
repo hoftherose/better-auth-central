@@ -2,7 +2,7 @@
     import { computed, onMounted, ref } from "vue";
     import { authClient } from "@/lib/auth-client";
 
-    const { data: session, refresh } = authClient.useSession(useFetch);
+    const { data: session } = await authClient.useSession(useFetch);
     const error = ref<string | null>(null);
     const loading = ref(false);
 
@@ -21,7 +21,6 @@
             await authClient.signOut({
                 fetchOptions: { credentials: "include" },
             });
-            await refresh();
             navigateTo("/", { replace: true });
         } catch (err: any) {
             error.value = err?.body?.message ?? err?.message ?? "Logout failed";
