@@ -6,4 +6,7 @@ export const auth = betterAuth({
     emailAndPassword: {
         enabled: true,
     },
+    session: {
+        deferSessionRefresh: true,
+    },
 });
