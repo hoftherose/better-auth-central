@@ -1,53 +1,29 @@
 <script setup lang="ts">
-    import { computed, ref } from "vue";
-    import { authClient } from "@/lib/auth-client";
-
     definePageMeta({
-        middleware: [
-            'auth',
-        ],
+        middleware: ["auth"],
         requiresAuth: true,
-    })
+        layout: 'dashboard',
+    });
 
-    const { data: session } = await authClient.useSession(useFetch);
-    const error = ref<string | null>(null);
-    const loading = ref(false);
-
-    const user = computed(() => session.value?.user);
-
-    async function handleSignOut() {
-        error.value = null;
-        loading.value = true;
-        try {
-            await authClient.signOut({
-                fetchOptions: { credentials: "include" },
-            });
-            navigateTo("/", { replace: true });
-        } catch (err: any) {
-            error.value = err?.body?.message ?? err?.message ?? "Logout failed";
-        } finally {
-            loading.value = false;
-        }
-    }
+    const sidebarOpen = useState<boolean>("dashboard-sidebar-open", () => true);
 </script>
 
 <template>
-    <Card class="w-full max-w-sm">
-        <CardHeader>
-            <CardTitle class="text-xl">Account</CardTitle>
-            <CardDescription>You&apos;re logged in.</CardDescription>
-        </CardHeader>
-        <CardContent>
-            <div class="grid gap-1">
-                <p class="font-medium">{{ user?.name || user?.email }}</p>
-                <p class="text-muted-foreground">{{ user?.email }}</p>
-            </div>
-        </CardContent>
-        <CardFooter class="justify-end">
-            <Button class="w-full" :disabled="loading" @click="handleSignOut">
-                {{ loading ? "Signing out…" : "Sign out" }}
-            </Button>
-            <p v-if="error" role="alert" class="text-sm text-destructive">{{ error }}</p>
-        </CardFooter>
-    </Card>
+    <Header />
+
+    <div class="flex min-h-0 flex-1">
+        <DashboardSidebar :isOpen="sidebarOpen" />
+
+        <main class="min-w-0 flex-1 p-4 sm:p-6">
+            <NuxtPage />
+        </main>
+    </div>
+
+    <p
+        v-if="logoutError"
+        role="alert"
+        class="border-t border-border bg-destructive/10 px-4 py-2 text-sm text-destructive"
+    >
+        {{ logoutError }}
+    </p>
 </template>
