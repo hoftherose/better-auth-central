@@ -20,6 +20,17 @@
     const isUsers = computed(() => route.path.endsWith("/users"));
     const isSessions = computed(() => route.path.endsWith("/sessions"));
 
+    const navLinkBase =
+        "flex items-center gap-2 rounded-md px-2.5 py-2 text-sm font-medium transition-colors hover:bg-muted";
+    const navLinkStates = {
+        active: "bg-muted text-foreground",
+        inactive: "text-muted-foreground",
+    } as const;
+
+    function navLinkClass(active: boolean) {
+        return `${navLinkBase} ${active ? navLinkStates.active : navLinkStates.inactive}`;
+    }
+
     function toggleSidebar() {
         sidebarOpen.value = !sidebarOpen.value;
     }
@@ -96,24 +107,14 @@
             >
                 <NuxtLink
                     to="/dashboard/users"
-                    class="flex items-center gap-2 rounded-md px-2.5 py-2 text-sm font-medium transition-colors hover:bg-muted"
-                    :class="
-                        isUsers
-                            ? 'bg-muted text-foreground'
-                            : 'text-muted-foreground'
-                    "
+                    :class="navLinkClass(isUsers)"
                 >
                     <Users :size="16" class="shrink-0" />
                     <span class="flex-1">Users</span>
                 </NuxtLink>
                 <NuxtLink
                     to="/dashboard/sessions"
-                    class="flex items-center gap-2 rounded-md px-2.5 py-2 text-sm font-medium transition-colors hover:bg-muted"
-                    :class="
-                        isSessions
-                            ? 'bg-muted text-foreground'
-                            : 'text-muted-foreground'
-                    "
+                    :class="navLinkClass(isSessions)"
                 >
                     <Activity :size="16" class="shrink-0" />
                     <span class="flex-1">Sessions</span>
