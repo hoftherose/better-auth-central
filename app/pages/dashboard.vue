@@ -1,53 +1,139 @@
 <script setup lang="ts">
-    import { computed, ref } from "vue";
+    import { Menu, Users, LogOut, Activity } from "@lucide/vue";
     import { authClient } from "@/lib/auth-client";
+    import { computed } from "vue";
 
     definePageMeta({
-        middleware: [
-            'auth',
-        ],
+        middleware: ["auth"],
         requiresAuth: true,
-    })
+    });
+
+    const route = useRoute();
+    const sidebarOpen = useState<boolean>("dashboard-sidebar-open", () => true);
+    const logoutLoading = ref(false);
+    const logoutError = ref<string | null>(null);
 
     const { data: session } = await authClient.useSession(useFetch);
-    const error = ref<string | null>(null);
-    const loading = ref(false);
-
     const user = computed(() => session.value?.user);
 
+    const isUsers = computed(() => route.path.endsWith("/users"));
+    const isSessions = computed(() => route.path.endsWith("/sessions"));
+
+    function toggleSidebar() {
+        sidebarOpen.value = !sidebarOpen.value;
+    }
+
     async function handleSignOut() {
-        error.value = null;
-        loading.value = true;
+        if (logoutLoading.value) return;
+        logoutError.value = null;
+        logoutLoading.value = true;
         try {
-            await authClient.signOut({
-                fetchOptions: { credentials: "include" },
-            });
-            navigateTo("/", { replace: true });
+            await authClient.signOut({ fetchOptions: { credentials: "include" } });
+            navigateTo("/login", { replace: true });
         } catch (err: any) {
-            error.value = err?.body?.message ?? err?.message ?? "Logout failed";
+            logoutError.value =
+                err?.body?.message ?? err?.message ?? "Sign out failed";
         } finally {
-            loading.value = false;
+            logoutLoading.value = false;
         }
     }
 </script>
 
 <template>
-    <Card class="w-full max-w-sm">
-        <CardHeader>
-            <CardTitle class="text-xl">Account</CardTitle>
-            <CardDescription>You&apos;re logged in.</CardDescription>
-        </CardHeader>
-        <CardContent>
-            <div class="grid gap-1">
-                <p class="font-medium">{{ user?.name || user?.email }}</p>
-                <p class="text-muted-foreground">{{ user?.email }}</p>
+    <div class="min-h-screen w-full bg-background text-foreground">
+        <div class="flex min-h-screen flex-col">
+            <header
+                class="sticky top-0 z-20 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80"
+            >
+                <div class="flex h-14 w-full items-center gap-2 px-3 sm:px-4">
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        class="shrink-0"
+                        aria-label="Toggle sidebar"
+                        :aria-expanded="sidebarOpen"
+                        @click="toggleSidebar"
+                    >
+                        <Menu />
+                    </Button>
+
+                    <NuxtLink
+                        to="/dashboard"
+                        class="truncate text-sm font-medium hover:opacity-80"
+                    >
+                        Better Auth
+                    </NuxtLink>
+
+                    <div class="ml-auto flex items-center gap-2">
+                        <span
+                            v-if="user"
+                            class="hidden max-w-40 truncate text-sm text-muted-foreground sm:inline"
+                        >
+                            {{ user.name || user.email }}
+                        </span>
+                        <Button
+                            variant="outline"
+                            class="shrink-0"
+                            :disabled="logoutLoading"
+                            @click="handleSignOut"
+                        >
+                            <LogOut />
+                            <span
+                            >{{ logoutLoading ? "Signing out…" : "Sign out" }}</span
+                            >
+                        </Button>
+                    </div>
+                </div>
+            </header>
+
+            <div class="flex min-h-0 flex-1">
+                <aside
+                    v-if="sidebarOpen"
+                    class="w-60 shrink-0 border-r border-border bg-background/50"
+                >
+                    <nav
+                        class="sticky top-14 flex flex-col gap-1 p-3"
+                        aria-label="Dashboard"
+                    >
+                        <NuxtLink
+                            to="/dashboard/users"
+                            class="flex items-center gap-2 rounded-md px-2.5 py-2 text-sm font-medium transition-colors hover:bg-muted"
+                            :class="
+                                isUsers
+                                    ? 'bg-muted text-foreground'
+                                    : 'text-muted-foreground'
+                            "
+                        >
+                            <Users :size="16" class="shrink-0" />
+                            <span class="flex-1">Users</span>
+                        </NuxtLink>
+                        <NuxtLink
+                            to="/dashboard/sessions"
+                            class="flex items-center gap-2 rounded-md px-2.5 py-2 text-sm font-medium transition-colors hover:bg-muted"
+                            :class="
+                                isSessions
+                                    ? 'bg-muted text-foreground'
+                                    : 'text-muted-foreground'
+                            "
+                        >
+                            <Activity :size="16" class="shrink-0" />
+                            <span class="flex-1">Sessions</span>
+                        </NuxtLink>
+                    </nav>
+                </aside>
+
+                <main class="min-w-0 flex-1 p-4 sm:p-6">
+                    <NuxtPage />
+                </main>
             </div>
-        </CardContent>
-        <CardFooter class="justify-end">
-            <Button class="w-full" :disabled="loading" @click="handleSignOut">
-                {{ loading ? "Signing out…" : "Sign out" }}
-            </Button>
-            <p v-if="error" role="alert" class="text-sm text-destructive">{{ error }}</p>
-        </CardFooter>
-    </Card>
+
+            <p
+                v-if="logoutError"
+                role="alert"
+                class="border-t border-border bg-destructive/10 px-4 py-2 text-sm text-destructive"
+            >
+                {{ logoutError }}
+            </p>
+        </div>
+    </div>
 </template>
