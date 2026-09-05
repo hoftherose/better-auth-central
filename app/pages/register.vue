@@ -58,7 +58,7 @@
                     },
                 },
             );
-            navigateTo("/login", { replace: true });
+            navigateTo("/", { replace: true });
         } catch (err: any) {
             error.value = extractErrorMessage(err) ?? "Registration failed";
             success.value = null;

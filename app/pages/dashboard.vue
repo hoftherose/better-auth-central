@@ -1,18 +1,19 @@
 <script setup lang="ts">
-    import { computed, onMounted, ref } from "vue";
+    import { computed, ref } from "vue";
     import { authClient } from "@/lib/auth-client";
+
+    definePageMeta({
+        middleware: [
+            'auth',
+        ],
+        requiresAuth: true,
+    })
 
     const { data: session } = await authClient.useSession(useFetch);
     const error = ref<string | null>(null);
     const loading = ref(false);
 
     const user = computed(() => session.value?.user);
-
-    onMounted(async () => {
-        if (!user.value) {
-            navigateTo("/", { replace: true });
-        }
-    });
 
     async function handleSignOut() {
         error.value = null;
