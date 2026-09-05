@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { Menu, Users, LogOut, Activity } from "@lucide/vue";
+    import { Menu, LogOut } from "@lucide/vue";
     import { authClient } from "@/lib/auth-client";
     import { computed } from "vue";
 
@@ -9,16 +9,12 @@
         layout: 'dashboard',
     });
 
-    const route = useRoute();
     const sidebarOpen = useState<boolean>("dashboard-sidebar-open", () => true);
     const logoutLoading = ref(false);
     const logoutError = ref<string | null>(null);
 
     const { data: session } = await authClient.useSession(useFetch);
     const user = computed(() => session.value?.user);
-
-    const isUsers = computed(() => route.path.endsWith("/users"));
-    const isSessions = computed(() => route.path.endsWith("/sessions"));
 
     function toggleSidebar() {
         sidebarOpen.value = !sidebarOpen.value;
@@ -86,28 +82,7 @@
     </header>
 
     <div class="flex min-h-0 flex-1">
-        <aside
-            v-if="sidebarOpen"
-            class="w-60 shrink-0 border-r border-border bg-background/50"
-        >
-            <nav
-                class="sticky top-14 flex flex-col gap-1 p-3"
-                aria-label="Dashboard"
-            >
-                <DashboardSidebarItem
-                    toPath="/dashboard/users"
-                    title="Users"
-                    :Icon="Users"
-                    :isActive="isUsers"
-                />
-                <DashboardSidebarItem
-                    toPath="/dashboard/sessions"
-                    title="Sessions"
-                    :Icon="Activity"
-                    :isActive="isSessions"
-                />
-            </nav>
-        </aside>
+        <DashboardSidebar :isOpen="sidebarOpen" />
 
         <main class="min-w-0 flex-1 p-4 sm:p-6">
             <NuxtPage />
