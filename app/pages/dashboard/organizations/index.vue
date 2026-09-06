@@ -1,84 +1,28 @@
 <script setup lang="ts">
-import { Building, Globe } from "@lucide/vue";
+    import { Building, Globe } from "@lucide/vue";
+    import { authClient } from "@/lib/auth-client";
 
-interface Organization {
-    name: string;
-    slug: string;
-    logo: string | null;
-    description: string;
-    memberCount: number;
-}
+    const { data: organizations } = await authClient.organization.list();
 
-const organizations: Organization[] = [
-    {
-        name: "Acme Corporation",
-        slug: "acme",
-        logo: "https://picsum.photos/seed/acme-corp/logo/128",
-        description:
-            "Enterprise software and cloud infrastructure for large-scale teams. Provides identity, billing, and tooling for thousands of developers.",
-        memberCount: 482,
-    },
-    {
-        name: "NuxtLabs",
-        slug: "nuxtlabs",
-        logo: "https://picsum.photos/seed/nuxtlabs/logo/128",
-        description:
-            "The team behind the open-source Nuxt framework. Experimenting with full-stack Vue, web performance, and developer experience.",
-        memberCount: 73,
-    },
-    {
-        name: "Open Source Collective",
-        slug: "oss-collective",
-        logo: null,
-        description:
-            "A community organization maintaining shared infrastructure, funding, and governance tools for open-source projects.",
-        memberCount: 1290,
-    },
-    {
-        name: "Pixel Studio",
-        slug: "pixel-studio",
-        logo: "/logos/pixel-studio.png",
-        description:
-            "Design and brand studio. Handles product design, illustrations, and marketing assets for internal teams and clients.",
-        memberCount: 24,
-    },
-    {
-        name: "Quantum Analytics",
-        slug: "quantum-analytics",
-        logo: "https://picsum.photos/seed/quantum/logo/128",
-        description:
-            "Data analytics and machine learning platform. Tracks product metrics, runs experiments, and automates reporting pipelines.",
-        memberCount: 96,
-    },
-    {
-        name: "DevOps Guild",
-        slug: "devops-guild",
-        logo: null,
-        description:
-            "Internal guild focused on CI/CD, infrastructure as code, and platform reliability across all engineering teams.",
-        memberCount: 158,
-    },
-];
+    function initialsFromName(name: string): string {
+        return name
+            .split(" ")
+            .filter((part) => /^[a-z0-9]/i.test(part))
+            .map((part) => part[0])
+            .slice(0, 2)
+            .join("")
+            .toUpperCase();
+    }
 
-function initialsFromName(name: string): string {
-    return name
-        .split(" ")
-        .filter((part) => /^[a-z0-9]/i.test(part))
-        .map((part) => part[0])
-        .slice(0, 2)
-        .join("")
-        .toUpperCase();
-}
+    const logoErrors = ref<Record<string, boolean>>({});
 
-const logoErrors = ref<Record<string, boolean>>({});
+    function handleLogoError(slug: string) {
+        logoErrors.value[slug] = true;
+    }
 
-function handleLogoError(slug: string) {
-    logoErrors.value[slug] = true;
-}
-
-function showImage(org: Organization): boolean {
-    return Boolean(org.logo) && !logoErrors.value[org.slug];
-}
+    function showImage(org: Organization): boolean {
+        return Boolean(org.logo) && !logoErrors.value[org.slug];
+    }
 </script>
 
 <template>
@@ -139,14 +83,14 @@ function showImage(org: Organization): boolean {
                 </CardHeader>
                 <CardContent class="flex flex-1 flex-col gap-3">
                     <p class="line-clamp-3 text-sm text-muted-foreground">
-                        {{ org.description }}
+                        {{ org.metadata?.description ?? "" }}
                     </p>
                     <div
                         class="mt-auto flex items-center pt-1 text-xs text-muted-foreground"
                     >
                         <span>
                             {{
-                                org.memberCount.toLocaleString("en-US")
+                                org.memberCount ?? "0"
                             }}
                             members
                         </span>
