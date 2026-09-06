@@ -37,16 +37,6 @@
         const start = (currentPage.value - 1) * pageSize.value;
         return filteredUsers.value.slice(start, start + pageSize.value);
     });
-
-    function formatDate(date: Date): string {
-        return new Intl.DateTimeFormat("en-US", {
-            day: "numeric",
-            month: "short",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-        }).format(date);
-    }
 </script>
 
 <template>
@@ -73,54 +63,7 @@
                         class="pl-8"
                     />
                 </div>
-
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Name</TableHead>
-                            <TableHead>Email</TableHead>
-                            <TableHead>Email verified</TableHead>
-                            <TableHead>Created</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        <TableRow v-for="user in pagedUsers" :key="user.id">
-                            <TableCell class="font-medium">
-                                <div
-                                    class="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-semibold uppercase"
-                                >
-                                    {{ user.name.split(" ").map((p) => p[0]).slice(0, 2).join("") }}
-                                </div>
-                                <NuxtLink
-                                    :to="`/dashboard/users/${user.id}`"
-                                    class="ml-3 font-medium text-foreground transition-colors hover:text-primary hover:underline"
-                                >
-                                    {{ user.name }}
-                                </NuxtLink>
-                            </TableCell>
-                            <TableCell class="text-muted-foreground">
-                                {{ user.email }}
-                            </TableCell>
-                            <TableCell>
-                                <span v-if="user.emailVerified" class="flex items-center gap-1.5 text-sm">
-                                    <BadgeCheck class="size-4 shrink-0 text-green-500" />
-                                    <span class="text-muted-foreground">Verified</span>
-                                </span>
-                                <span v-else class="flex items-center gap-1.5 text-sm">
-                                    <XCircle class="size-4 shrink-0 text-muted-foreground/60" />
-                                    <span class="text-muted-foreground">Not verified</span>
-                                </span>
-                            </TableCell>
-                            <TableCell class="text-muted-foreground">
-                                {{ formatDate(user.createdAt) }}
-                            </TableCell>
-                        </TableRow>
-                        <TableEmpty v-if="pagedUsers.length === 0" :colspan="4">
-                            No results found.
-                        </TableEmpty>
-                    </TableBody>
-                </Table>
-
+                <UserTable :users=pagedUsers />
                 <Pagination
                     v-model:page="currentPage"
                     :total="filteredUsers.length"
