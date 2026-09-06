@@ -91,7 +91,12 @@
                                 >
                                     {{ user.name.split(" ").map((p) => p[0]).slice(0, 2).join("") }}
                                 </div>
-                                <span class="ml-3">{{ user.name }}</span>
+                                <NuxtLink
+                                    :to="`/dashboard/user/${user.id}`"
+                                    class="ml-3 font-medium text-foreground transition-colors hover:text-primary hover:underline"
+                                >
+                                    {{ user.name }}
+                                </NuxtLink>
                             </TableCell>
                             <TableCell class="text-muted-foreground">
                                 {{ user.email }}

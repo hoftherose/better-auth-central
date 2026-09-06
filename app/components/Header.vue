@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { Menu, LogOut } from "@lucide/vue";
+    import { Menu, LogOut, BookOpen, ChevronRight, House } from "@lucide/vue";
     import { computed } from "vue";
 
     import { authClient } from "@/lib/auth-client";
@@ -28,6 +28,49 @@
             logoutLoading.value = false;
         }
     }
+
+    // Breadcrumb derived from the current route.
+    const route = useRoute();
+    interface Crumb {
+        label: string;
+        to?: string;
+        isLast?: boolean;
+    }
+
+    function titleFromSegment(segment: string): string {
+        const decoded = decodeURIComponent(segment);
+        const words = decoded
+            .replace(/[-_]/g, " ")
+            .replace(/\b\w/g, (c) => c.toUpperCase())
+            .trim();
+        return words || segment;
+    }
+
+    const crumbs = computed<Crumb[]>(() => {
+        const segments = route.path
+            .split("/")
+            .filter((s) => s.length > 0);
+        const result: Crumb[] = [];
+        let path = "/dashboard";
+        for (let i = 0; i < segments.length; i++) {
+            path += `/${segments[i]}`;
+            const isLast = i === segments.length - 1;
+            result.push({
+                label: titleFromSegment(segments[i]),
+                to: isLast ? undefined : path,
+                isLast,
+            });
+        }
+        return result;
+    });
+
+    function initials(name?: string, email?: string): string {
+        const source = (name || email || "?").trim();
+        const parts = source.split(/\s+/);
+        const first = parts[0]?.[0] ?? "?";
+        const last = parts.length > 1 ? parts[parts.length - 1][0] : "";
+        return (first + last).toUpperCase();
+    }
 </script>
 
 <template>
@@ -53,14 +96,81 @@
                 Better Auth
             </NuxtLink>
 
-            <div class="ml-auto flex items-center gap-2">
-                <NuxtLink to="/api/auth/reference" external>Docs</NuxtLink>
-                <span
+            <div
+                v-if="crumbs.length > 0"
+                class="flex min-w-0 items-center gap-1 text-sm"
+                aria-label="Breadcrumb"
+            >
+                <nav class="flex min-w-0 items-center gap-1" aria-label="Breadcrumb nav">
+                    <span
+                        v-if="crumbs.length > 1"
+                        class="hidden items-center gap-1 text-muted-foreground/70 xl:flex"
+                    >
+                        <NuxtLink
+                            to="/dashboard"
+                            class="rounded p-0.5 transition-colors hover:bg-muted hover:text-foreground"
+                            aria-label="Dashboard"
+                        >
+                            <House :size="14" />
+                        </NuxtLink>
+                        <ChevronRight :size="14" class="text-muted-foreground/50" />
+                    </span>
+                    <template v-for="(crumb, index) in crumbs" :key="`${crumb.label}-${index}`">
+                        <template v-if="index > 0">
+                            <ChevronRight
+                                :size="14"
+                                class="shrink-0 text-muted-foreground/50"
+                            />
+                        </template>
+                        <NuxtLink
+                            v-if="crumb.to"
+                            :to="crumb.to"
+                            class="max-w-28 truncate rounded px-1 py-0.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                        >
+                            {{ crumb.label }}
+                        </NuxtLink>
+                        <span
+                            v-else
+                            class="max-w-32 truncate rounded px-1 py-0.5 font-medium text-foreground"
+                            aria-current="page"
+                        >
+                            {{ crumb.label }}
+                        </span>
+                    </template>
+                </nav>
+            </div>
+
+            <div class="ml-auto flex shrink-0 items-center gap-2">
+                <Button as-child variant="outline" size="sm" class="gap-1.5">
+                    <NuxtLink to="/api/auth/reference" target="_blank" rel="noopener">
+                        <BookOpen />
+                        <span>Docs</span>
+                    </NuxtLink>
+                </Button>
+                <NuxtLink
                     v-if="user"
-                    class="hidden max-w-40 truncate text-sm text-muted-foreground sm:inline"
+                    :to="user.id ? `/dashboard/user/${user.id}` : '/dashboard/users'"
+                    class="hidden items-center gap-2 rounded-full border border-border bg-background py-1 pe-3 ps-1 transition-colors hover:bg-muted sm:inline-flex"
                 >
-                    {{ user.name || user.email }}
-                </span>
+                    <Avatar
+                        class="size-7 shrink-0 rounded-full"
+                        :alt="user.name || user.email || 'User'"
+                    >
+                        <AvatarImage
+                            v-if="user.image"
+                            :src="user.image"
+                            :alt="user.name || user.email || 'User avatar'"
+                        />
+                        <AvatarFallback
+                            class="bg-primary text-xs font-semibold text-primary-foreground"
+                        >
+                            {{ initials(user.name, user.email) }}
+                        </AvatarFallback>
+                    </Avatar>
+                    <span class="max-w-32 truncate text-sm font-medium">
+                        {{ user.name || user.email }}
+                    </span>
+                </NuxtLink>
                 <Button
                     variant="outline"
                     class="shrink-0"
