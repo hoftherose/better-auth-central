@@ -1,8 +1,9 @@
 <script setup lang="ts">
     import { computed } from "vue";
     import { authClient } from "@/lib/auth-client";
+    import relativeFetch from "@/utils/fetch";
 
-    const { data: session } = await authClient.useSession(useFetch);
+    const { data: session } = await authClient.useSession(relativeFetch);
     const user = computed(() => session.value?.user);
 
     const error = ref<string | null>(null);
