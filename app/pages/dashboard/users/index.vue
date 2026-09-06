@@ -3,7 +3,8 @@
     import { authClient } from "@/lib/auth-client";
 
     const pageSize = ref(10);
-    const currentPage = ref(1);
+    const currentPageState = "dashboard-user-pagination-current"
+    const currentPage = useState<boolean>(currentPageState, () => 1);
 
     const query = ref("");
     const searchQuery = computed(() => query.value.trim().toLowerCase());
@@ -64,30 +65,11 @@
                     />
                 </div>
                 <UserTable :users=pagedUsers />
-                <Pagination
-                    v-model:page="currentPage"
+                <DashboardPagination
+                    :currentPageState="currentPageState"
                     :total="filteredUsers.length"
-                    :items-per-page="pageSize"
-                    :sibling-count="1"
-                    :show-edges="true"
-                >
-                    <PaginationContent class="!mx-auto sm:mx-auto">
-                        <template v-slot="{ items }">
-                            <PaginationPrevious />
-                            <template v-for="item in items" :key="item.value || 'ellipsis'">
-                                <PaginationItem
-                                    v-if="item.value"
-                                    :value="item.value"
-                                    :is-active="currentPage === item.value"
-                                >
-                                    {{ item.value }}
-                                </PaginationItem>
-                                <PaginationEllipsis v-else />
-                            </template>
-                            <PaginationNext />
-                        </template>
-                    </PaginationContent>
-                </Pagination>
+                    :pageSize="pageSize"
+                />
             </CardContent>
         </Card>
     </div>
