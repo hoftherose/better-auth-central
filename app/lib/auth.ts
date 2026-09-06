@@ -1,5 +1,5 @@
 import { betterAuth } from "better-auth";
-import { admin, openAPI } from "better-auth/plugins";
+import { admin, openAPI, organization } from "better-auth/plugins";
 import Database from "better-sqlite3";
 
 const baseURL = process.env.BETTER_AUTH_URL || 'http://localhost:3000'
@@ -11,7 +11,8 @@ export const auth = betterAuth({
     },
     plugins: [
         admin(),
-        openAPI()
+        openAPI(),
+        organization(),
     ],
     session: {
         // deferSessionRefresh: true,
