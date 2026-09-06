@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
     import type { HTMLAttributes } from 'vue'
     import { cn } from '@/lib/utils'
 
@@ -8,10 +8,10 @@
 </script>
 
 <template>
-    <div
-        data-slot="card-action"
-        :class="cn('col-start-2 row-span-2 row-start-1 self-start justify-self-end', props.class)"
+    <ol
+        data-slot="breadcrumb-list"
+        :class="cn('text-muted-foreground gap-1.5 text-sm flex flex-wrap items-center wrap-break-word', props.class)"
     >
         <slot />
-    </div>
+    </ol>
 </template>

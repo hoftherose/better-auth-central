@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { Users, Activity } from "@lucide/vue";
+    import { Users, Activity, Building } from "@lucide/vue";
     defineProps({
         isOpen: {
             type: Boolean,
@@ -7,8 +7,15 @@
     })
 
     const route = useRoute();
-    const isUsers = computed(() => route.path.endsWith("/users"));
+    const isUsers = computed(
+        () =>
+            route.path.endsWith("/users") ||
+            route.path.includes("/users/")
+    );
     const isSessions = computed(() => route.path.endsWith("/sessions"));
+    const isOrganizations = computed(
+        () => route.path.includes("/organizations")
+    );
 </script>
 
 <template>
@@ -20,6 +27,12 @@
             class="sticky top-14 flex flex-col gap-1 p-3"
             aria-label="Dashboard"
         >
+            <DashboardSidebarItem
+                toPath="/dashboard/organizations"
+                title="Organizations"
+                :Icon="Building"
+                :isActive="isOrganizations"
+            />
             <DashboardSidebarItem
                 toPath="/dashboard/users"
                 title="Users"
