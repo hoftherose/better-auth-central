@@ -1,68 +1,41 @@
 <script setup lang="ts">
     import { Users, Search, BadgeCheck, XCircle } from "@lucide/vue";
+    import { authClient } from "@/lib/auth-client";
 
-    interface User {
-        id: string;
-        name: string;
-        email: string;
-        emailVerified: boolean;
-        createdAt: Date;
-    }
-
-    const firstNames = [
-        "James", "Maria", "Li", "Aisha", "Diego", "Sofia", "Noah",
-        "Emma", "Kenji", "Fatima", "Lucas", "Ingrid", "Ravi",
-        "Chloe", "Omar", "Yuki", "Elena", "Marcus", "Zara", "Finn",
-        "Amara", "Tomas", "Nina", "Kwame", "Isla",
-    ];
-    const lastNames = [
-        "Anderson", "Garcia", "Chen", "Khan", "Rodriguez", "Rossi",
-        "Williams", "Muller", "Tanaka", "Hassan", "Silva", "Berg",
-        "Patel", "Dubois", "Ali", "Sato", "Petrov", "Weber", "Okafor",
-        "Larsen", "Diallo", "Novak", "Bergstrom", "Mensah", "McAllister",
-    ];
-
-    const users: User[] = Array.from({ length: 25 }, (_, i) => {
-        const name = `${firstNames[i % firstNames.length]} ${lastNames[i % lastNames.length]}`;
-        const email =
-            name.toLowerCase().replace(/[^a-z]+/g, ".") + (i >= firstNames.length ? String(i + 1) : "") + "@example.com";
-        const createdAt = new Date(2025, 1, 3, 9, 30, 0).getTime() + i * 1000 * 60 * 60 * 7 * 11;
-        return {
-            id: `usr_${i + 1}`,
-            name,
-            email,
-            emailVerified: i % 3 !== 0,
-            createdAt: new Date(createdAt),
-        };
-    });
-
-    const pageSize = 10;
-
-    const query = ref("");
+    const pageSize = ref(10);
     const currentPage = ref(1);
 
+    const query = ref("");
     const searchQuery = computed(() => query.value.trim().toLowerCase());
+
+    const { data, error } = await authClient.admin.listUsers({
+        query: {
+            limit: pageSize,
+            offset: (currentPage - 1) * pageSize
+        }
+    });
+    const users = data?.users ?? [];
+    const totalUsers = data?.total ?? 0;
+
+    const totalPages = computed(() => {
+        return Math.ceil(totalUsers / pageSize.value)
+    });
 
     const filteredUsers = computed(() => {
         if (!searchQuery.value) return users;
         return users.filter(
             (u) =>
-                u.name.toLowerCase().includes(searchQuery.value) ||
-                u.email.toLowerCase().includes(searchQuery.value),
+                u.name.toLowerCase().includes(searchQuery.value)
         );
     });
-
-    const totalPages = computed(() =>
-        Math.max(1, Math.ceil(filteredUsers.value.length / pageSize)),
-    );
 
     watch(searchQuery, () => {
         currentPage.value = 1;
     });
 
     const pagedUsers = computed(() => {
-        const start = (currentPage.value - 1) * pageSize;
-        return filteredUsers.value.slice(start, start + pageSize);
+        const start = (currentPage.value - 1) * pageSize.value;
+        return filteredUsers.value.slice(start, start + pageSize.value);
     });
 
     function formatDate(date: Date): string {
