@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import type { HTMLAttributes } from 'vue'
-import { cn } from '@/lib/utils'
+    import type { HTMLAttributes } from 'vue'
+    import { cn } from '@/lib/utils'
 
-const props = withDefaults(defineProps<{
-  class?: HTMLAttributes['class']
-  size?: 'default' | 'sm'
-}>(), {
-  size: 'default',
-})
+    const props = withDefaults(defineProps<{
+        class?: HTMLAttributes['class']
+        size?: 'default' | 'sm'
+    }>(), {
+        size: 'default',
+    })
 </script>
 
 <template>
