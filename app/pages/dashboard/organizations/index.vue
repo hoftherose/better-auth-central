@@ -124,7 +124,7 @@ function showImage(org: Organization): boolean {
                     <div class="flex min-w-0 flex-1 flex-col">
                         <CardTitle class="text-base leading-tight">
                             <NuxtLink
-                                :to="`/dashboard/organization/${org.slug}`"
+                                :to="`/dashboard/organizations/${org.slug}`"
                                 class="transition-colors hover:text-primary hover:underline"
                             >
                                 {{ org.name }}

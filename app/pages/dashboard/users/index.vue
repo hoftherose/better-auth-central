@@ -92,7 +92,7 @@
                                     {{ user.name.split(" ").map((p) => p[0]).slice(0, 2).join("") }}
                                 </div>
                                 <NuxtLink
-                                    :to="`/dashboard/user/${user.id}`"
+                                    :to="`/dashboard/users/${user.id}`"
                                     class="ml-3 font-medium text-foreground transition-colors hover:text-primary hover:underline"
                                 >
                                     {{ user.name }}

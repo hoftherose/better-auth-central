@@ -10,7 +10,7 @@
     const isUsers = computed(
         () =>
             route.path.endsWith("/users") ||
-            route.path.includes("/user/")
+            route.path.includes("/users/")
     );
     const isSessions = computed(() => route.path.endsWith("/sessions"));
     const isOrganizations = computed(

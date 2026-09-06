@@ -149,7 +149,7 @@
     const members = computed(() =>
         mockMembers.slice(0, 2 + (seed % 4)).map((m) => ({
             ...m,
-            user: `/dashboard/user/${m.email.split("@")[0].replace(/ /g, ".")}`,
+            user: `/dashboard/users/${m.email.split("@")[0].replace(/ /g, ".")}`,
         }))
     );
 

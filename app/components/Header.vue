@@ -51,7 +51,7 @@
             .split("/")
             .filter((s) => s.length > 0);
         const result: Crumb[] = [];
-        let path = "/dashboard";
+        let path = "";
         for (let i = 0; i < segments.length; i++) {
             path += `/${segments[i]}`;
             const isLast = i === segments.length - 1;
@@ -158,7 +158,7 @@
                 </Button>
                 <NuxtLink
                     v-if="user"
-                    :to="user.id ? `/dashboard/user/${user.id}` : '/dashboard/users'"
+                    :to="user.id ? `/dashboard/users/${user.id}` : '/dashboard/users'"
                     class="hidden h-9 items-center gap-2 rounded-lg border border-border bg-card py-0 pe-3 pl-1 transition-colors hover:bg-muted sm:inline-flex"
                 >
                     <Avatar
