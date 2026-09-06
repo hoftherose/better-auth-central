@@ -1,4 +1,4 @@
-import { auth } from "~~/lib/auth";
+import { auth } from "@/lib/auth";
 import { toWebRequest } from "h3";
 
 export default defineEventHandler(async (event) => {
