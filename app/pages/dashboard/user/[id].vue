@@ -167,7 +167,7 @@
                             <BadgeCheck class="size-3.5" /> verified
                         </span>
                         <span v-else
-                            class="inline-flex items-center gap-1 text-muted-foreground"
+                              class="inline-flex items-center gap-1 text-muted-foreground"
                         >
                             <XCircle class="size-3.5" /> unverified
                         </span>

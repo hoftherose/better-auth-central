@@ -12,11 +12,11 @@ const props = defineProps<{
 </script>
 
 <template>
-  <AvatarRoot
-    data-slot="avatar"
-    :data-size="size ?? 'default'"
-    :class="cn(avatarVariants({ size }), props.class)"
-  >
-    <slot />
-  </AvatarRoot>
+    <AvatarRoot
+        data-slot="avatar"
+        :data-size="size ?? 'default'"
+        :class="cn(avatarVariants({ size }), props.class)"
+    >
+        <slot />
+    </AvatarRoot>
 </template>
