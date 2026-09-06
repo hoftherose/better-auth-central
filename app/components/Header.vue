@@ -141,16 +141,25 @@
             </div>
 
             <div class="ml-auto flex shrink-0 items-center gap-2">
-                <Button as-child variant="outline" size="sm" class="gap-1.5">
+                <Button
+                    as-child
+                    variant="outline"
+                    class="h-9 gap-1.5 rounded-lg px-3 font-medium"
+                >
                     <NuxtLink to="/api/auth/reference" target="_blank" rel="noopener">
-                        <BookOpen />
+                        <BookOpen class="size-4" />
                         <span>Docs</span>
+                        <span
+                            class="hidden rounded-r-md border-l border-border bg-muted px-1.5 text-[11px] uppercase tracking-wide text-muted-foreground sm:inline-flex"
+                        >
+                            API
+                        </span>
                     </NuxtLink>
                 </Button>
                 <NuxtLink
                     v-if="user"
                     :to="user.id ? `/dashboard/user/${user.id}` : '/dashboard/users'"
-                    class="hidden items-center gap-2 rounded-full border border-border bg-background py-1 pe-3 ps-1 transition-colors hover:bg-muted sm:inline-flex"
+                    class="hidden h-9 items-center gap-2 rounded-lg border border-border bg-card py-0 pe-3 pl-1 transition-colors hover:bg-muted sm:inline-flex"
                 >
                     <Avatar
                         class="size-7 shrink-0 rounded-full"

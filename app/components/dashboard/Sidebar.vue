@@ -7,7 +7,11 @@
     })
 
     const route = useRoute();
-    const isUsers = computed(() => route.path.endsWith("/users"));
+    const isUsers = computed(
+        () =>
+            route.path.endsWith("/users") ||
+            route.path.includes("/user/")
+    );
     const isSessions = computed(() => route.path.endsWith("/sessions"));
     const isOrganizations = computed(
         () => route.path.includes("/organizations")
