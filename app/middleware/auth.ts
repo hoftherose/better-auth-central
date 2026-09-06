@@ -1,4 +1,5 @@
 import { authClient } from "@/lib/auth-client";
+import relativeFetch from "@/utils/fetch";
 
 
 export default defineNuxtRouteMiddleware(async (to) => {
@@ -6,7 +7,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
         return;
     }
 
-    const { data: session } = await authClient.useSession(useFetch);
+    const { data: session } = await authClient.useSession(relativeFetch);
     if (!session.value?.user) {
         return navigateTo("/login", { replace: true });
     }

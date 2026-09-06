@@ -1,7 +1,8 @@
 <script setup lang="ts">
     import { authClient } from "@/lib/auth-client";
+    import relativeFetch from "@/utils/fetch";
 
-    const { data: session } = await authClient.useSession(useFetch);
+    const { data: session } = await authClient.useSession(relativeFetch);
 </script>
 
 <template>

@@ -1,10 +1,11 @@
 <script setup lang="ts">
     import { Menu, LogOut } from "@lucide/vue";
-
-    import { authClient } from "@/lib/auth-client";
     import { computed } from "vue";
 
-    const { data: session } = await authClient.useSession(useFetch);
+    import { authClient } from "@/lib/auth-client";
+    import relativeFetch from "@/utils/fetch";
+
+    const { data: session } = await authClient.useSession(relativeFetch);
     const user = computed(() => session.value?.user);
     const logoutLoading = ref(false);
     const logoutError = ref<string | null>(null);
