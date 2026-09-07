@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { Users, Search, BadgeCheck, XCircle } from "@lucide/vue";
+    import { Users, Search } from "@lucide/vue";
     import { authClient } from "@/lib/auth-client";
 
     const pageSize = ref(10);
