@@ -10,84 +10,47 @@
         Activity,
         KeyRound,
     } from "@lucide/vue";
+    import { authClient } from "@/lib/auth-client";
 
     const route = useRoute();
     const userId = String(route.params.id ?? "unknown");
 
-    function hash(str: string): number {
-        let h = 0;
-        for (let i = 0; i < str.length; i++) {
-            h = (h * 31 + str.charCodeAt(i)) | 0;
-        }
-        return Math.abs(h);
-    }
-    const seed = hash(userId);
-
-    const mock = computed(() => {
-        const names = [
-            "Ava Nguyen",
-            "Marcus Chen",
-            "Priya Rao",
-            "Diego Alvarez",
-            "Lena Fischer",
-        ];
-        const emails = [
-            "ava.nguyen@example.com",
-            "marcus.chen@example.com",
-            "priya.rao@example.com",
-            "diego.alvarez@example.com",
-            "lena.fischer@example.com",
-        ];
-        const roles = ["Admin", "Developer", "Reviewer", "Support", "Analyst"];
-        const cities = [
-            "Singapore",
-            "Lisbon",
-            "Toronto",
-            "Berlin",
-            "Seoul",
-        ];
-        const departments = [
-            "Platform",
-            "Frontend",
-            "Data",
-            "QA",
-            "Product",
-        ];
-
-        const name = names[seed % names.length];
-        const emailBase = name
-            .toLowerCase()
-            .replace(/\s+/g, ".")
-            .split(".");
-        const domain = ["example.com", "dev.example.io"][seed % 2];
-        return {
-            id: userId,
-            name,
-            email: `${emailBase.join(".")}@${domain}`,
-            emailVerified: seed % 3 !== 0,
-            image: seed % 4 === 0 ? `https://i.pravatar.cc/160?u=${userId}` : null,
-            role: roles[seed % roles.length],
-            department: departments[seed % departments.length],
-            city: cities[seed % cities.length],
-            timezone: [
-                "UTC+8",
-                "UTC+0",
-                "UTC-5",
-                "UTC+1",
-                "UTC+9",
-            ][seed % 5],
-            joined: new Date(
-                2023,
-                (seed % 12),
-                (seed % 28) + 1,
-            ),
-            lastActive: new Date(Date.now() - (seed % 96) * 3600 * 1000),
-            sessionCount: 1 + (seed % 5),
-            mfaEnabled: seed % 2 === 0,
-        };
+    const { data, error } = await authClient.admin.getUser({
+        query: { id: userId },
     });
 
-    const user = computed(() => mock.value);
+    const userNotfound = error?.error?.code === "USER_NOT_FOUND" || !data;
+
+    const rawUser = data ?? undefined;
+
+    const displayName = rawUser?.name || rawUser?.email || "Unknown user";
+
+    const joined = computed<Date | null>(() => {
+        const raw = rawUser?.createdAt;
+        if (!raw) return null;
+        const date = raw instanceof Date ? raw : new Date(raw);
+        return Number.isNaN(date.getTime()) ? null : date;
+    });
+
+    const user = computed(() => ({
+        id: rawUser?.id ?? userId,
+        name: displayName,
+        email: rawUser?.email || "—",
+        emailVerified: rawUser?.emailVerified ?? false,
+        image: rawUser?.image ?? null,
+        role: rawUser?.role || "Member",
+        // Defaults — Organization
+        department: "—",
+        city: "—",
+        timezone: "UTC",
+        workMode: "Remote",
+        // Defaults — Activity
+        joined: joined.value,
+        lastActive: null,
+        sessionCount: 0,
+        // Defaults — Identity
+        mfaEnabled: false,
+    }));
 
     function formatDate(date: Date): string {
         return new Intl.DateTimeFormat("en-US", {
@@ -118,7 +81,6 @@
 <template>
     <div class="mx-auto max-w-4xl">
         <Button
-            v-if="true"
             variant="ghost"
             size="sm"
             class="mb-4 gap-1 text-muted-foreground hover:text-foreground"
@@ -129,7 +91,14 @@
             </NuxtLink>
         </Button>
 
-        <Card>
+        <Card v-if="userNotfound" class="mb-4">
+            <CardContent class="flex items-center gap-2 p-5 text-sm text-muted-foreground">
+                <XCircle class="size-4 shrink-0" />
+                User <code class="rounded bg-muted px-1 font-mono">{{ userId }}</code> was not found
+                or you do not have permission to view it.
+            </CardContent>
+        </Card>
+        <Card v-else>
             <CardHeader class="flex flex-col items-start gap-4 rounded-t-2xl border-b bg-muted/40 p-6 sm:flex-row sm:items-center">
                 <Avatar class="h-20 w-20 shrink-0 rounded-2xl border">
                     <AvatarImage
@@ -236,7 +205,7 @@
                                 <Globe
                                     class="mt-0.5 size-3.5 shrink-0 text-muted-foreground"
                                 />
-                                <span>Remote</span>
+                                <span>{{ user.workMode }}</span>
                             </div>
                         </div>
                     </div>
@@ -255,7 +224,7 @@
                                     class="mt-0.5 size-3.5 shrink-0 text-muted-foreground"
                                 />
                                 <span>
-                                    Joined {{ formatDate(user.joined) }}
+                                    Joined {{ user.joined ? formatDate(user.joined) : "—" }}
                                 </span>
                             </div>
                             <div class="flex items-start gap-2">
@@ -263,7 +232,7 @@
                                     class="mt-0.5 size-3.5 shrink-0 text-muted-foreground"
                                 />
                                 <span>
-                                    Last active {{ formatRelative(user.lastActive) }}
+                                    Last active {{ user.lastActive ? formatRelative(user.lastActive) : "—" }}
                                 </span>
                             </div>
                             <div class="flex items-start gap-2">
@@ -281,9 +250,10 @@
         </Card>
 
         <p class="mt-3 text-xs text-muted-foreground">
-            This profile is mocked for demonstration. Replace with a call to
-            <code class="rounded bg-muted px-1">authClient.admin.getUser()</code>
-            when wiring to production data.
+            Profile data is loaded via
+            <code class="rounded bg-muted px-1">authClient.admin.getUser()</code>.
+            MFA, Organization and some Activity fields use defaults until they
+            are exposed by the API.
         </p>
     </div>
 </template>
