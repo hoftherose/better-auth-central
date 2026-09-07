@@ -3,48 +3,38 @@
     defineProps({
         isOpen: {
             type: Boolean,
+            required: true,
         },
     })
 
     const route = useRoute();
-    const isUsers = computed(
-        () =>
-            route.path.endsWith("/users") ||
-            route.path.includes("/users/")
-    );
-    const isSessions = computed(() => route.path.endsWith("/sessions"));
-    const isOrganizations = computed(
-        () => route.path.includes("/organizations")
-    );
+    const isUsers = computed(() => route.path.includes("/users"));
+    const isSessions = computed(() => route.path.includes("/sessions"));
+    const isOrganizations = computed(() => route.path.includes("/organizations"));
 </script>
 
 <template>
     <aside
         v-if="isOpen"
-        class="w-60 shrink-0 border-r border-border bg-background/50"
+        class="w-60 shrink-0 border-r border-border bg-background/50 sticky top-14 flex flex-col gap-1 p-3"
     >
-        <nav
-            class="sticky top-14 flex flex-col gap-1 p-3"
-            aria-label="Dashboard"
-        >
-            <DashboardSidebarItem
-                toPath="/dashboard/organizations"
-                title="Organizations"
-                :Icon="Building"
-                :isActive="isOrganizations"
-            />
-            <DashboardSidebarItem
-                toPath="/dashboard/users"
-                title="Users"
-                :Icon="Users"
-                :isActive="isUsers"
-            />
-            <DashboardSidebarItem
-                toPath="/dashboard/sessions"
-                title="Sessions"
-                :Icon="Activity"
-                :isActive="isSessions"
-            />
-        </nav>
+        <DashboardSidebarItem
+            toPath="/dashboard/organizations"
+            title="Organizations"
+            :Icon="Building"
+            :isActive="isOrganizations"
+        />
+        <DashboardSidebarItem
+            toPath="/dashboard/users"
+            title="Users"
+            :Icon="Users"
+            :isActive="isUsers"
+        />
+        <DashboardSidebarItem
+            toPath="/dashboard/sessions"
+            title="Sessions"
+            :Icon="Activity"
+            :isActive="isSessions"
+        />
     </aside>
 </template>

@@ -1,18 +1,9 @@
 <script setup lang="ts">
     import { Globe } from "@lucide/vue";
+    import { initialsFromName } from "@/utils/text_parse";
     defineProps({
         org: {},
     })
-
-    function initialsFromName(name: string): string {
-        return name
-            .split(" ")
-            .filter((part) => /^[a-z0-9]/i.test(part))
-            .map((part) => part[0])
-            .slice(0, 2)
-            .join("")
-            .toUpperCase();
-    }
 
     const logoErrors = ref<Record<string, boolean>>({});
 
@@ -24,7 +15,7 @@
         return Boolean(org.logo) && !logoErrors.value[org.slug];
     }
 
-    function parse_metadata(org: Organization): boolean {
+    function parseMetadata(org: Organization): boolean {
         return JSON.parse(org.metadata)
     }
 </script>
@@ -69,14 +60,14 @@
         </CardHeader>
         <CardContent class="flex flex-1 flex-col gap-3">
             <p class="line-clamp-3 text-sm text-muted-foreground">
-                {{ parse_metadata(org).description }}
+                {{ parseMetadata(org).description }}
             </p>
             <div
                 class="mt-auto flex items-center pt-1 text-xs text-muted-foreground"
             >
                 <span>
                     {{
-                        parse_metadata(org).memberCount
+                        parseMetadata(org).memberCount
                     }}
                     members
                 </span>

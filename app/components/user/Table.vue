@@ -1,4 +1,5 @@
 <script setup lang="ts">
+    import { XCircle, BadgeCheck } from "@lucide/vue";
     defineProps({
         users: {},
     })
@@ -27,11 +28,7 @@
         <TableBody>
             <TableRow v-for="user in users" :key="user.id">
                 <TableCell class="font-medium">
-                    <div
-                        class="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-semibold uppercase"
-                    >
-                        {{ user.name.split(" ").map((p) => p[0]).slice(0, 2).join("") }}
-                    </div>
+                    <UserAvatar :user="user" />
                     <NuxtLink
                         :to="`/dashboard/users/${user.id}`"
                         class="ml-3 font-medium text-foreground transition-colors hover:text-primary hover:underline"

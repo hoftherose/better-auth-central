@@ -63,14 +63,6 @@
         }
         return result;
     });
-
-    function initials(name?: string, email?: string): string {
-        const source = (name || email || "?").trim();
-        const parts = source.split(/\s+/);
-        const first = parts[0]?.[0] ?? "?";
-        const last = parts.length > 1 ? parts[parts.length - 1][0] : "";
-        return (first + last).toUpperCase();
-    }
 </script>
 
 <template>
@@ -89,21 +81,12 @@
                 <Menu />
             </Button>
 
-            <NuxtLink
-                to="/dashboard"
-                class="truncate text-sm font-medium hover:opacity-80"
-            >
-                Better Auth
-            </NuxtLink>
-
             <div
-                v-if="crumbs.length > 0"
                 class="flex min-w-0 items-center gap-1 text-sm"
                 aria-label="Breadcrumb"
             >
                 <nav class="flex min-w-0 items-center gap-1" aria-label="Breadcrumb nav">
                     <span
-                        v-if="crumbs.length > 1"
                         class="hidden items-center gap-1 text-muted-foreground/70 xl:flex"
                     >
                         <NuxtLink
@@ -161,21 +144,7 @@
                     :to="user.id ? `/dashboard/users/${user.id}` : '/dashboard/users'"
                     class="hidden h-9 items-center gap-2 rounded-lg border border-border bg-card py-0 pe-3 pl-1 transition-colors hover:bg-muted sm:inline-flex"
                 >
-                    <Avatar
-                        class="size-7 shrink-0 rounded-full"
-                        :alt="user.name || user.email || 'User'"
-                    >
-                        <AvatarImage
-                            v-if="user.image"
-                            :src="user.image"
-                            :alt="user.name || user.email || 'User avatar'"
-                        />
-                        <AvatarFallback
-                            class="bg-primary text-xs font-semibold text-primary-foreground"
-                        >
-                            {{ initials(user.name, user.email) }}
-                        </AvatarFallback>
-                    </Avatar>
+                    <UserAvatar :user="user" />
                     <span class="max-w-32 truncate text-sm font-medium">
                         {{ user.name || user.email }}
                     </span>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+    import { LayoutDashboard } from "@lucide/vue";
     import { authClient } from "@/lib/auth-client";
     import relativeFetch from "@/utils/fetch";
 
@@ -6,12 +7,14 @@
 </script>
 
 <template>
-    <div class="mx-auto flex max-w-3xl flex-col gap-6">
+    <div class="mx-auto flex flex-col gap-6">
+        <DashboardSectionTitle
+            :Icon="LayoutDashboard"
+            title="Dashboard"
+            description="Manage your Better Auth application."
+        />
         <div>
             <h1 class="text-2xl font-semibold tracking-tight">Dashboard</h1>
-            <p class="mt-1 text-muted-foreground">
-                Manage your Better Auth application.
-            </p>
         </div>
 
         <Card>
