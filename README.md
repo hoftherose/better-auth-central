@@ -24,12 +24,13 @@ The server should have the following features and plugins, support given in the 
  - [x] Admin https://better-auth.com/docs/plugins/admin
  - [x] Open API https://better-auth.com/docs/plugins/open-api
  - [ ] Username https://better-auth.com/docs/plugins/username
- - [ ] Anonymous https://better-auth.com/docs/plugins/anonymous
+ - [ ] OAuth 2.1 Provider https://better-auth.com/docs/plugins/oauth-provider
  - [ ] JWT https://better-auth.com/docs/plugins/jwt
+ - [ ] API Keys https://better-auth.com/docs/plugins/api-key
+ - [ ] Anonymous https://better-auth.com/docs/plugins/anonymous
  - [ ] Configurable Rate limiting https://better-auth.com/docs/concepts/rate-limit
  - [ ] Stripe https://better-auth.com/docs/plugins/stripe
  - [ ] Single Sign-On (SSO) https://better-auth.com/docs/plugins/sso
- - [ ] OAuth 2.1 Provider https://better-auth.com/docs/plugins/oauth-provider
  - [ ] Generic OAuth https://better-auth.com/docs/plugins/generic-oauth
  - [ ] Audit Logs (Not from infra, custom implementation)
  - [ ] Dashboard (Not from infra, custom implementation)
