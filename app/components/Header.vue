@@ -8,7 +8,7 @@
     const { data: session } = await authClient.useSession(relativeFetch);
     const user = computed(() => session.value?.user);
     const logoutLoading = ref(false);
-    const logoutError = ref<string | null>(null);
+    const logoutError = useState<string | null>("logout-error", () => null);
 
     const sidebarOpen = useState<boolean>("dashboard-sidebar-open", () => true);
     function toggleSidebar() {
