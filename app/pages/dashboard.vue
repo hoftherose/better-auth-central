@@ -6,6 +6,7 @@
     });
 
     const sidebarOpen = useState<boolean>("dashboard-sidebar-open", () => true);
+    const logoutError = useState<string | null>("logout-error", () => null);
 </script>
 
 <template>
