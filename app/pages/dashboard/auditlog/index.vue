@@ -1,17 +1,6 @@
 <script setup lang="ts">
+    import { authClient } from "@/lib/auth-client";
     import { History, Search, CircleCheck, CircleX, AlertTriangle, ShieldAlert } from "@lucide/vue";
-
-    type AuditLogStatus = "success" | "failed";
-    type AuditLogSeverity = "low" | "medium" | "high";
-
-    interface AuditLog {
-        id: string;
-        userId: string;
-        action: string;
-        status: AuditLogStatus;
-        severity: AuditLogSeverity;
-        createdAt: Date;
-    }
 
     const pageSize = ref(10);
     const currentPageState = "dashboard-auditlog-pagination-current";
@@ -25,28 +14,10 @@
     const HOUR = 60 * 60 * 1000;
     const DAY = 24 * HOUR;
 
-    const logs = [
-        { id: "log_f7a2c91d", userId: "usr_9xk2m4p", action: "auth.login", status: "success", severity: "low", createdAt: new Date(now - 12 * 60 * 1000) },
-        { id: "log_8b31e0af", userId: "usr_9xk2m4p", action: "auth.token.refresh", status: "success", severity: "low", createdAt: new Date(now - 1 * HOUR) },
-        { id: "log_c4d92b7e", userId: "usr_q7j3n8v", action: "auth.login", status: "failed", severity: "medium", createdAt: new Date(now - 2 * HOUR) },
-        { id: "log_1e6f8a3c", userId: "usr_q7j3n8v", action: "password.reset.request", status: "success", severity: "medium", createdAt: new Date(now - 3 * HOUR) },
-        { id: "log_a92c4d61", userId: "usr_q7j3n8v", action: "password.reset", status: "failed", severity: "high", createdAt: new Date(now - 5 * HOUR) },
-        { id: "log_d3b7e9f2", userId: "usr_m5t8w1k", action: "admin.listUsers", status: "success", severity: "low", createdAt: new Date(now - 8 * HOUR) },
-        { id: "log_5c1a8b4d", userId: "usr_m5t8w1k", action: "admin.deleteUser", status: "failed", severity: "high", createdAt: new Date(now - DAY) },
-        { id: "log_6e2f9c8a", userId: "usr_9xk2m4p", action: "session.create", status: "success", severity: "low", createdAt: new Date(now - DAY - 2 * HOUR) },
-        { id: "log_7f3a1b5e", userId: "usr_r2v6x9z", action: "auth.login", status: "failed", severity: "high", createdAt: new Date(now - 2 * DAY) },
-        { id: "log_8a4c2d6f", userId: "usr_r2v6x9z", action: "auth.login", status: "failed", severity: "high", createdAt: new Date(now - 2 * DAY - 30 * 60 * 1000) },
-        { id: "log_9b5d3e7a", userId: "usr_r2v6x9z", action: "auth.login", status: "success", severity: "low", createdAt: new Date(now - 2 * DAY - 3 * HOUR) },
-        { id: "log_1c6e4f8b", userId: "usr_m5t8w1k", action: "admin.updateUser", status: "success", severity: "medium", createdAt: new Date(now - 3 * DAY) },
-        { id: "log_2d7f5a9c", userId: "usr_s4w8y2a", action: "organization.create", status: "success", severity: "low", createdAt: new Date(now - 3 * DAY - 4 * HOUR) },
-        { id: "log_3e8a6b1d", userId: "usr_s4w8y2a", action: "organization.invite", status: "failed", severity: "medium", createdAt: new Date(now - 4 * DAY) },
-        { id: "log_4f9b7c2e", userId: "usr_9xk2m4p", action: "session.delete", status: "success", severity: "low", createdAt: new Date(now - 4 * DAY - 6 * HOUR) },
-        { id: "log_5a1c8d3f", userId: "usr_t6y9z4b", action: "api.key.create", status: "success", severity: "medium", createdAt: new Date(now - 5 * DAY) },
-        { id: "log_6b2d9e4a", userId: "usr_t6y9z4b", action: "api.key.revoke", status: "success", severity: "high", createdAt: new Date(now - 6 * DAY) },
-        { id: "log_7c3e1f5b", userId: "usr_q7j3n8v", action: "auth.login", status: "success", severity: "low", createdAt: new Date(now - 6 * DAY - 5 * HOUR) },
-        { id: "log_8d4f2a6c", userId: "usr_u8z1a5c", action: "password.update", status: "failed", severity: "medium", createdAt: new Date(now - 7 * DAY) },
-        { id: "log_9e5a3b7d", userId: "usr_u8z1a5c", action: "password.update", status: "success", severity: "medium", createdAt: new Date(now - 7 * DAY - 2 * HOUR) },
-    ] as AuditLog[];
+    const { data, error } = await authClient.auditLog.list({
+        query: { limit: 500 },
+    })
+    const logs = data?.entries ?? [];
 
     function formatDate(date: Date): string {
         return new Intl.DateTimeFormat("en-US", {
