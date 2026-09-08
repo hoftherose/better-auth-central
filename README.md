@@ -32,7 +32,7 @@ The server should have the following features and plugins, support given in the 
  - [ ] Stripe https://better-auth.com/docs/plugins/stripe
  - [ ] Single Sign-On (SSO) https://better-auth.com/docs/plugins/sso
  - [ ] Generic OAuth https://better-auth.com/docs/plugins/generic-oauth
- - [ ] Audit Logs (Not from infra, custom implementation)
+ - [x] Audit Logs https://github.com/ejirocodes/better-auth-audit-logs
  - [ ] Dashboard (Not from infra, custom implementation)
  - [ ] Polar https://better-auth.com/docs/plugins/polar
 

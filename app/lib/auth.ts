@@ -1,5 +1,6 @@
 import { betterAuth } from "better-auth";
 import { admin, openAPI, organization } from "better-auth/plugins";
+import { auditLog } from "better-auth-audit-logs";
 import Database from "better-sqlite3";
 
 const baseURL = process.env.BETTER_AUTH_URL || 'http://localhost:3000'
@@ -11,6 +12,7 @@ export const auth = betterAuth({
     },
     plugins: [
         admin(),
+        auditLog(),
         openAPI(),
         organization(),
     ],
