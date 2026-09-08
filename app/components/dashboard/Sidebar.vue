@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { Users, Activity, Building } from "@lucide/vue";
+    import { Users, Activity, Building, History } from "@lucide/vue";
     defineProps({
         isOpen: {
             type: Boolean,
@@ -11,6 +11,7 @@
     const isUsers = computed(() => route.path.includes("/users"));
     const isSessions = computed(() => route.path.includes("/sessions"));
     const isOrganizations = computed(() => route.path.includes("/organizations"));
+    const isAuditLog = computed(() => route.path.includes("/auditlog"));
 </script>
 
 <template>
@@ -35,6 +36,12 @@
             title="Sessions"
             :Icon="Activity"
             :isActive="isSessions"
+        />
+        <DashboardSidebarItem
+            toPath="/dashboard/auditlog"
+            title="Audit Log"
+            :Icon="History"
+            :isActive="isAuditLog"
         />
     </aside>
 </template>
