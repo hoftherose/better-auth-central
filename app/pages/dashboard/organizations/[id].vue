@@ -1,7 +1,6 @@
 <script setup lang="ts">
     import {
         Building,
-        Briefcase,
         UsersRound,
         Globe,
         Calendar,
@@ -13,145 +12,70 @@
         MapPin,
     } from "@lucide/vue";
 
+    import { authClient } from "@/lib/auth-client";
+
     const route = useRoute();
     const orgSlug = String(route.params.id ?? "unknown");
 
-    function hash(str: string): number {
-        let h = 0;
-        for (let i = 0; i < str.length; i++) {
-            h = (h * 31 + str.charCodeAt(i)) | 0;
-        }
-        return Math.abs(h);
-    }
-    const seed = hash(orgSlug);
+    const { data: orgData } = await authClient.organization.getOrganization({
+        query: {
+            organizationSlug: orgSlug,
+        },
+    });
 
-    const organizations = [
-        {
-            name: "Acme Corporation",
-            slug: "acme",
-            logo: "https://picsum.photos/seed/acme-corp/logo/128",
-            description:
-                "Enterprise software and cloud infrastructure for large-scale teams. Provides identity, billing, and tooling for thousands of developers.",
-            industry: "Enterprise Software",
-            website: "https://acme.example.com",
-            location: "San Francisco, CA",
-            plan: "Enterprise",
-            size: "501–1000 employees",
-            created: new Date(2021, 2, 14),
-            members: 482,
-            roles: ["Owner", "Admin", "Member", "Billing"],
-            sso: true,
+    const { data: membersData } = await authClient.organization.listMembers({
+        query: {
+            organizationSlug: orgSlug,
         },
-        {
-            name: "NuxtLabs",
-            slug: "nuxtlabs",
-            logo: "https://picsum.photos/seed/nuxtlabs/logo/128",
-            description:
-                "The team behind the open-source Nuxt framework. Experimenting with full-stack Vue, web performance, and developer experience.",
-            industry: "Open Source",
-            website: "https://nuxt.com",
-            location: "Lyon, FR",
-            plan: "Business",
-            size: "11–50 employees",
-            created: new Date(2022, 8, 1),
-            members: 73,
-            roles: ["Owner", "Admin", "Member"],
-            sso: false,
-        },
-        {
-            name: "Open Source Collective",
-            slug: "oss-collective",
-            logo: null,
-            description:
-                "A community organization maintaining shared infrastructure, funding, and governance tools for open-source projects.",
-            industry: "Non-profit",
-            website: "https://oss.gift",
-            location: "Remote, Worldwide",
-            plan: "Free",
-            size: "1000+ members",
-            created: new Date(2020, 10, 9),
-            members: 1290,
-            roles: ["Owner", "Admin", "Member", "Sponsor"],
-            sso: true,
-        },
-        {
-            name: "Pixel Studio",
-            slug: "pixel-studio",
-            logo: "/logos/pixel-studio.png",
-            description:
-                "Design and brand studio. Handles product design, illustrations, and marketing assets for internal teams and clients.",
-            industry: "Design",
-            website: "https://pixel.example.io",
-            location: "Lisbon, PT",
-            plan: "Business",
-            size: "2–10 employees",
-            created: new Date(2023, 1, 20),
-            members: 24,
-            roles: ["Owner", "Member"],
-            sso: false,
-        },
-        {
-            name: "Quantum Analytics",
-            slug: "quantum-analytics",
-            logo: "https://picsum.photos/seed/quantum/logo/128",
-            description:
-                "Data analytics and machine learning platform. Tracks product metrics, runs experiments, and automates reporting pipelines.",
-            industry: "Data & AI",
-            website: "https://quantum.example.com",
-            location: "Berlin, DE",
-            plan: "Enterprise",
-            size: "51–200 employees",
-            created: new Date(2021, 6, 2),
-            members: 96,
-            roles: ["Owner", "Admin", "Member", "Analyst"],
-            sso: true,
-        },
-        {
-            name: "DevOps Guild",
-            slug: "devops-guild",
-            logo: null,
-            description:
-                "Internal guild focused on CI/CD, infrastructure as code, and platform reliability across all engineering teams.",
-            industry: "Internal",
-            website: null,
-            location: "Remote, US",
-            plan: "Free",
-            size: "100–200 members",
-            created: new Date(2019, 4, 11),
-            members: 158,
-            roles: ["Owner", "Admin", "Member"],
-            sso: true,
-        },
-    ];
-
-    const mockMembers = [
-        { name: "Ava Nguyen", email: "ava.nguyen@example.com", role: "Owner" },
-        { name: "Marcus Chen", email: "marcus.chen@example.com", role: "Admin" },
-        { name: "Priya Rao", email: "priya.rao@example.com", role: "Member" },
-        { name: "Diego Alvarez", email: "diego.alvarez@example.com", role: "Member" },
-        { name: "Lena Fischer", email: "lena.fischer@example.com", role: "Member" },
-    ];
-
-    const org = computed(() => {
-        const found = organizations.find((o) => o.slug === orgSlug);
-        const base = found ?? {
-            ...organizations[seed % organizations.length],
-            slug: orgSlug,
-        };
-        return {
-            ...base,
-            name: found ? found.name : `${base.name} (${orgSlug})`,
-            apiKeys: 1 + (seed % 6),
-            lastActive: new Date(Date.now() - (seed % 72) * 3600 * 1000),
-        };
     });
 
     const members = computed(() =>
-        mockMembers.slice(0, 2 + (seed % 4)).map((m) => ({
-            ...m,
-            user: `/dashboard/users/${m.email.split("@")[0].replace(/ /g, ".")}`,
+        (membersData?.value?.members ?? []).map((m: any) => ({
+            id: m.id,
+            userId: m.userId,
+            role: String(m.role ?? "member"),
+            createdAt: m.createdAt,
+            name: m.user?.name ?? "Unknown user",
+            email: m.user?.email ?? "",
+            user: `/dashboard/users/${m.userId}`,
         }))
     );
+
+    const metadata = computed<Record<string, any>>(() => {
+        try {
+            return orgData?.value?.metadata
+                ? JSON.parse(orgData?.value?.metadata)
+                : {};
+        } catch {
+            return {};
+        }
+    });
+
+    const org = computed(() => {
+        const roles = Array.from(
+            new Set(
+                members.value?.map((m: any) => m.role.charAt(0).toUpperCase() + m.role.slice(1))
+            )
+        );
+        return {
+            id: orgData?.value?.id ?? orgSlug,
+            slug: orgData?.value?.slug ?? orgSlug,
+            name: orgData?.value?.name ?? orgSlug,
+            logo: orgData?.value?.logo ?? null,
+            created: orgData?.value?.createdAt ? new Date(orgData?.value?.createdAt) : null,
+            members: metadata.value?.memberCount ?? members.value?.length,
+            roles: roles.length ? roles : ["Member"],
+            industry: metadata.value?.industry ?? "Not specified",
+            size: metadata.value?.size ?? "Not specified",
+            website: metadata.value?.website ?? null,
+            location: metadata.value?.location ?? "Not specified",
+            plan: metadata.value?.plan ?? "Free",
+            sso: Boolean(metadata.value?.sso),
+            apiKeys: 0,
+            lastActive: orgData?.value?.createdAt ? new Date(orgData?.value?.createdAt) : new Date(),
+        };
+    });
+
 
     function formatDate(date: Date): string {
         return new Intl.DateTimeFormat("en-US", {
@@ -382,12 +306,11 @@
         </Card>
 
         <p class="mt-3 text-xs text-muted-foreground">
-            This organization profile is mocked for demonstration. Replace with a
-            call to
+            Details, membership, and activity are sourced from
             <code class="rounded bg-muted px-1">
-                authClient.organization.getOrganization()
-            </code>
-            when wiring to production data.
+                authClient.organization
+            </code>. Industry, size, plan, and activity are shown with sensible defaults
+            until richer data is available.
         </p>
     </div>
 </template>
