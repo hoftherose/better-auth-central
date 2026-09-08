@@ -14,6 +14,8 @@
     const HOUR = 60 * 60 * 1000;
     const DAY = 24 * HOUR;
 
+    // TODO Only gets logs of current session user, find way to get all users or usrs by permission.
+    // This is an issue because login attempts are logged through null user id.
     const { data, error } = await authClient.auditLog.list({
         query: { limit: 500 },
     })
