@@ -30,7 +30,7 @@
     });
 
     const members = computed(() =>
-        (membersData.value?.members ?? []).map((m: any) => ({
+        (membersData?.value?.members ?? []).map((m: any) => ({
             id: m.id,
             userId: m.userId,
             role: String(m.role ?? "member"),
@@ -43,8 +43,8 @@
 
     const metadata = computed<Record<string, any>>(() => {
         try {
-            return orgData.value?.metadata
-                ? JSON.parse(orgData.value.metadata)
+            return orgData?.value?.metadata
+                ? JSON.parse(orgData?.value?.metadata)
                 : {};
         } catch {
             return {};
@@ -54,16 +54,16 @@
     const org = computed(() => {
         const roles = Array.from(
             new Set(
-                members.value.map((m: any) => m.role.charAt(0).toUpperCase() + m.role.slice(1))
+                members.value?.map((m: any) => m.role.charAt(0).toUpperCase() + m.role.slice(1))
             )
         );
         return {
-            id: orgData.value?.id ?? orgSlug,
-            slug: orgData.value?.slug ?? orgSlug,
-            name: orgData.value?.name ?? orgSlug,
-            logo: orgData.value?.logo ?? null,
-            created: orgData.value?.createdAt ? new Date(orgData.value.createdAt) : null,
-            members: metadata.value?.memberCount ?? members.value.length,
+            id: orgData?.value?.id ?? orgSlug,
+            slug: orgData?.value?.slug ?? orgSlug,
+            name: orgData?.value?.name ?? orgSlug,
+            logo: orgData?.value?.logo ?? null,
+            created: orgData?.value?.createdAt ? new Date(orgData?.value?.createdAt) : null,
+            members: metadata.value?.memberCount ?? members.value?.length,
             roles: roles.length ? roles : ["Member"],
             industry: metadata.value?.industry ?? "Not specified",
             size: metadata.value?.size ?? "Not specified",
@@ -72,7 +72,7 @@
             plan: metadata.value?.plan ?? "Free",
             sso: Boolean(metadata.value?.sso),
             apiKeys: 0,
-            lastActive: orgData.value?.createdAt ? new Date(orgData.value.createdAt) : new Date(),
+            lastActive: orgData?.value?.createdAt ? new Date(orgData?.value?.createdAt) : new Date(),
         };
     });
 
