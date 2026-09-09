@@ -1,5 +1,5 @@
 import { betterAuth } from "better-auth";
-import { admin, openAPI, organization } from "better-auth/plugins";
+import { admin, openAPI, organization, username } from "better-auth/plugins";
 import { auditLog } from "better-auth-audit-logs";
 import Database from "better-sqlite3";
 
@@ -15,6 +15,7 @@ export const auth = betterAuth({
         auditLog(),
         openAPI(),
         organization(),
+        username(),
     ],
     session: {
         // deferSessionRefresh: true,
