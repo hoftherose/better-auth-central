@@ -20,6 +20,7 @@
         <TableHeader>
             <TableRow>
                 <TableHead>Name</TableHead>
+                <TableHead>Username</TableHead>
                 <TableHead>Email</TableHead>
                 <TableHead>Email verified</TableHead>
                 <TableHead>Created</TableHead>
@@ -28,13 +29,15 @@
         <TableBody>
             <TableRow v-for="user in users" :key="user.id">
                 <TableCell class="font-medium">
-                    <UserAvatar :user="user" />
                     <NuxtLink
                         :to="`/dashboard/users/${user.id}`"
                         class="ml-3 font-medium text-foreground transition-colors hover:text-primary hover:underline"
                     >
                         {{ user.name }}
                     </NuxtLink>
+                </TableCell>
+                <TableCell class="text-muted-foreground">
+                    {{ user.displayUsername }}
                 </TableCell>
                 <TableCell class="text-muted-foreground">
                     {{ user.email }}

@@ -23,7 +23,7 @@
 
     const rawUser = data ?? undefined;
 
-    const displayName = rawUser?.name || rawUser?.email || "Unknown user";
+    const displayName = rawUser?.displayUsername || rawUser?.email || "Unknown user";
 
     const joined = computed<Date | null>(() => {
         const raw = rawUser?.createdAt;
