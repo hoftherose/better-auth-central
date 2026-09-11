@@ -7,6 +7,7 @@
     const user = computed(() => session.value?.user);
 
     const name = ref("");
+    const usernameInput = ref("");
     const email = ref("");
     const password = ref("");
     const confirmPassword = ref("");
@@ -32,6 +33,11 @@
         error.value = null;
         success.value = null;
 
+        if (!usernameInput.value.trim()) {
+            error.value = "Username is required";
+            return;
+        }
+
         if (password.value !== confirmPassword.value) {
             error.value = "Passwords do not match";
             return;
@@ -43,6 +49,8 @@
                 {
                     name: name.value,
                     email: email.value,
+                    username: usernameInput.value.trim().toLowerCase(),
+                    displayUsername: usernameInput.value.trim(),
                     password: password.value,
                     callbackURL: "/",
                     fetchOptions: { credentials: "include" },
@@ -95,6 +103,22 @@
                         placeholder="Jane Doe"
                         :disabled="loading"
                     />
+                </div>
+                <div class="grid gap-2">
+                    <Label for="reg-username">Username</Label>
+                    <Input
+                        id="reg-username"
+                        v-model.trim="usernameInput"
+                        type="text"
+                        required
+                        minlength="3"
+                        autocomplete="username"
+                        placeholder="janedoe"
+                        :disabled="loading"
+                    />
+                    <p class="text-xs text-muted-foreground">
+                        Case-insensitive, displayed as you typed it.
+                    </p>
                 </div>
                 <div class="grid gap-2">
                     <Label for="reg-email">Email</Label>

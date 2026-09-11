@@ -1,5 +1,5 @@
 import { createAuthClient } from "better-auth/vue";
-import { adminClient, organizationClient } from "better-auth/client/plugins";
+import { adminClient, organizationClient, usernameClient } from "better-auth/client/plugins";
 import { auditLogClient } from "better-auth-audit-logs/client";
 
 export const authClient = createAuthClient({
@@ -8,6 +8,7 @@ export const authClient = createAuthClient({
         adminClient(),
         auditLogClient(),
         organizationClient(),
+        usernameClient(),
     ]
 });
 
