@@ -10,6 +10,7 @@
         BadgeCheck,
         Mail,
         MapPin,
+        Trash2,
     } from "@lucide/vue";
 
     import { authClient } from "@/lib/auth-client";
@@ -76,6 +77,10 @@
         };
     });
 
+
+    function deleteOrganization() {
+        console.log("Organization deleted");
+    }
 
     function formatDate(date: Date): string {
         return new Intl.DateTimeFormat("en-US", {
@@ -151,6 +156,17 @@
                         >
                             <ShieldCheck class="size-3" /> SSO
                         </Badge>
+                    </div>
+                    <div class="mt-3">
+                        <Button
+                            variant="destructive"
+                            size="sm"
+                            class="gap-1.5"
+                            @click="deleteOrganization"
+                        >
+                            <Trash2 class="size-4" />
+                            Delete organization
+                        </Button>
                     </div>
                     <CardDescription class="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
                         <span class="inline-flex items-center gap-1.5">

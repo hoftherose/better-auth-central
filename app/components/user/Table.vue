@@ -1,8 +1,12 @@
 <script setup lang="ts">
-    import { XCircle, BadgeCheck } from "@lucide/vue";
+    import { XCircle, BadgeCheck, Trash2 } from "@lucide/vue";
     defineProps({
         users: {},
     })
+
+    function deleteUser(user: User) {
+        console.log("User deleted");
+    }
 
     function formatDate(date: Date): string {
         return new Intl.DateTimeFormat("en-US", {
@@ -24,6 +28,7 @@
                 <TableHead>Email</TableHead>
                 <TableHead>Email verified</TableHead>
                 <TableHead>Created</TableHead>
+                <TableHead class="w-10"></TableHead>
             </TableRow>
         </TableHeader>
         <TableBody>
@@ -55,8 +60,18 @@
                 <TableCell class="text-muted-foreground">
                     {{ formatDate(user.createdAt) }}
                 </TableCell>
+                <TableCell class="text-right">
+                    <Button
+                        variant="destructive"
+                        size="icon-sm"
+                        aria-label="Delete user"
+                        @click="deleteUser(user)"
+                    >
+                        <Trash2 class="size-4" />
+                    </Button>
+                </TableCell>
             </TableRow>
-            <TableEmpty v-if="users.length === 0" :colspan="4">
+            <TableEmpty v-if="users.length === 0" :colspan="6">
                 No results found.
             </TableEmpty>
         </TableBody>

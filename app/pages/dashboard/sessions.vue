@@ -1,8 +1,12 @@
 <script setup lang="ts">
-    import { Activity, Search, User, Monitor, MonitorSmartphone } from "@lucide/vue";
+    import { Activity, Search, User, Monitor, MonitorSmartphone, Trash2 } from "@lucide/vue";
     import { authClient } from "@/lib/auth-client";
     const { data, error } = await authClient.listSessions()
     const sessions = data ?? [];
+
+    function revokeSession(session: any) {
+        console.log("Session revoked");
+    }
 
     const query = ref("");
     const searchQuery = computed(() => query.value.trim().toLowerCase());
@@ -60,6 +64,7 @@
                             <TableHead>Expires</TableHead>
                             <TableHead>Impersonated by</TableHead>
                             <TableHead>Active org</TableHead>
+                            <TableHead class="w-10"></TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -99,8 +104,18 @@
                             <TableCell class="text-sm text-muted-foreground">
                                 {{ session.activeOrganizationId ?? "—" }}
                             </TableCell>
+                            <TableCell class="text-right">
+                                <Button
+                                    variant="destructive"
+                                    size="icon-sm"
+                                    aria-label="Revoke session"
+                                    @click="revokeSession(session)"
+                                >
+                                    <Trash2 class="size-4" />
+                                </Button>
+                            </TableCell>
                         </TableRow>
-                        <TableEmpty v-if="filteredSessions.length === 0" :colspan="8">
+                        <TableEmpty v-if="filteredSessions.length === 0" :colspan="9">
                             No sessions found.
                         </TableEmpty>
                     </TableBody>

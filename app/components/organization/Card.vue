@@ -1,9 +1,13 @@
 <script setup lang="ts">
-    import { Globe } from "@lucide/vue";
+    import { Globe, Trash2 } from "@lucide/vue";
     import { initialsFromName } from "@/utils/text_parse";
     defineProps({
         org: {},
     })
+
+    function deleteOrganization() {
+        console.log("Organization deleted");
+    }
 
     const logoErrors = ref<Record<string, boolean>>({});
 
@@ -57,6 +61,15 @@
                     /{{ org.slug }}
                 </CardDescription>
             </div>
+            <Button
+                variant="destructive"
+                size="sm"
+                class="gap-1.5"
+                @click="deleteOrganization"
+            >
+                <Trash2 class="size-4" />
+                Delete
+            </Button>
         </CardHeader>
         <CardContent class="flex flex-1 flex-col gap-3">
             <p class="line-clamp-3 text-sm text-muted-foreground">

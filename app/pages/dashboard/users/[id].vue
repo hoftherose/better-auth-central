@@ -9,6 +9,7 @@
         Globe,
         Activity,
         KeyRound,
+        Trash2,
     } from "@lucide/vue";
     import { authClient } from "@/lib/auth-client";
 
@@ -51,6 +52,10 @@
         // Defaults — Identity
         mfaEnabled: false,
     }));
+
+    function deleteUser() {
+        console.log("User deleted");
+    }
 
     function formatDate(date: Date): string {
         return new Intl.DateTimeFormat("en-US", {
@@ -123,6 +128,17 @@
                         >
                             <BadgeCheck class="size-3" /> {{ user.role }}
                         </Badge>
+                    </div>
+                    <div class="mt-3">
+                        <Button
+                            variant="destructive"
+                            size="sm"
+                            class="gap-1.5"
+                            @click="deleteUser"
+                        >
+                            <Trash2 class="size-4" />
+                            Delete user
+                        </Button>
                     </div>
                     <CardDescription class="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
                         <span class="inline-flex items-center gap-1.5">
