@@ -43,6 +43,22 @@
                     .
                 </p>
             </CardContent>
+            <CardFooter class="justify-end">
+                <Button
+                    variant="outline"
+                    class="text-destructive hover:text-destructive"
+                    @click="confirmDeleteOpen = true"
+                >
+                    <Trash2 />
+                    Delete
+                </Button>
+            </CardFooter>
         </Card>
+
+        <DashboardConfirmDeleteModal
+            v-model:open="confirmDeleteOpen"
+            text="Are you sure you want to confirm?"
+            :on-confirm="handleConfirm"
+        />
     </div>
 </template>

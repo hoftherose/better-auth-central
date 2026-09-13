@@ -1,11 +1,12 @@
 <script setup lang="ts">
-    import { XCircle, BadgeCheck, Trash2 } from "@lucide/vue";
+    import { XCircle, BadgeCheck } from "@lucide/vue";
     defineProps({
         users: {},
     })
 
-    function deleteUser(user: User) {
-        console.log("User deleted");
+    function handleConfirm(item: unknown) {
+        const user = item as { id: string; name?: string; email?: string };
+        console.log("User deleted", user?.name ?? user?.id);
     }
 
     function formatDate(date: Date): string {
@@ -61,14 +62,11 @@
                     {{ formatDate(user.createdAt) }}
                 </TableCell>
                 <TableCell class="text-right">
-                    <Button
-                        variant="destructive"
-                        size="icon-sm"
-                        aria-label="Delete user"
-                        @click="deleteUser(user)"
-                    >
-                        <Trash2 class="size-4" />
-                    </Button>
+                    <DeleteButton
+                        :text="`Are you sure you want to delete user ${user.name ?? user.email}?`"
+                        :onConfirm="handleConfirm"
+                        :itemDelete="user"
+                    />
                 </TableCell>
             </TableRow>
             <TableEmpty v-if="users.length === 0" :colspan="6">
